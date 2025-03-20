@@ -1,123 +1,122 @@
-// Function Exception Handling yang bisa dipakai di mana saja
-function exceptionHandling(callback) {
+// Function untuk menangani error biar nggak crash
+function handleError(callback) {
     try {
-        callback(); // Jalankan function yang dilempar ke sini
+        callback();
     } catch (error) {
         alert("Error: " + error.message);
     }
 }
 
-// Function untuk validasi Nama
+// Validasi Nama (tidak boleh kosong atau mengandung angka)
 function validateNama(nama) {
-    if (nama === "") {
-        throw new Error("Nama tidak boleh kosong!");
-    }
-    if (/\d/.test(nama)) {
-        throw new Error("Nama tidak boleh mengandung angka!");
-    }
+    if (nama.trim() === "") throw new Error("Nama tidak boleh kosong!");
+    if (/\d/.test(nama)) throw new Error("Nama tidak boleh mengandung angka!");
 }
 
-// Function untuk validasi Jumlah
+// Validasi Jumlah Pilihan (harus angka positif)
 function validateJumlah(jumlah) {
-    jumlah = parseInt(jumlah, 10);
-    if (isNaN(jumlah) || jumlah <= 0) {
-        throw new Error("Jumlah harus berupa angka positif!");
-    }
-    return jumlah;
+    let num = parseInt(jumlah, 10);
+    if (isNaN(num) || num <= 0) throw new Error("Jumlah harus berupa angka positif!");
+    return num;
 }
 
-// Function untuk validasi Pilihan
+// Validasi setiap Pilihan (tidak boleh kosong atau berupa angka)
 function validatePilihan(pilihan) {
-    if (pilihan === "") {
-        throw new Error("Semua pilihan harus diisi!");
-    }
-    if (!isNaN(pilihan)) {
-        throw new Error("Pilihan tidak boleh berupa angka!");
-    }
+    if (pilihan.trim() === "") throw new Error("Semua pilihan harus diisi!");
+    if (!isNaN(pilihan)) throw new Error("Pilihan tidak boleh berupa angka!");
 }
 
-// Function utama dengan Exception Handling
+// Function utama untuk menampilkan input pilihan
 function showPilihan() {
-    exceptionHandling(() => { // Bungkus dalam exceptionHandling()
+    handleError(() => {
         let namaInput = document.getElementById("nama");
         let jumlahInput = document.getElementById("jumlah");
-        let container = document.getElementById("pilihan-container");
+        let submitButton = document.getElementById("submitButton");
+        let pilihanContainer = document.getElementById("pilihan-container");
 
         let nama = namaInput.value.trim();
         let jumlah = jumlahInput.value.trim();
 
-        container.innerHTML = ""; // Hapus input sebelumnya
-
         validateNama(nama);
         jumlah = validateJumlah(jumlah);
 
+        // Kunci input setelah submit
         namaInput.disabled = true;
         jumlahInput.disabled = true;
-        
+        submitButton.disabled = true;
+
+        pilihanContainer.innerHTML = "<legend>Masukkan Pilihan</legend>";
 
         for (let i = 1; i <= jumlah; i++) {
             let label = document.createElement("label");
-            label.innerText = "Pilihan " + i + " : ";
-            
+            label.innerText = "Pilihan " + i + ":";
+
             let input = document.createElement("input");
             input.type = "text";
             input.placeholder = "Teks Pilihan " + i;
             input.id = "pilihan" + i;
 
-            container.appendChild(label);
-            container.appendChild(input);
-            container.appendChild(document.createElement("br"));
+            pilihanContainer.appendChild(label);
+            pilihanContainer.appendChild(input);
         }
 
         let button = document.createElement("button");
         button.innerText = "OK";
-        button.onclick = showSelection;
-        container.appendChild(document.createElement("br"));
-        container.appendChild(button);
+        button.onclick = () => handleSelection(jumlah);
+        pilihanContainer.appendChild(button);
     });
 }
 
-// Function untuk menampilkan dropdown
-function showSelection() {
-    exceptionHandling(() => {
-        let jumlah = parseInt(document.getElementById("jumlah").value, 10);
-        let selectionContainer = document.getElementById("selection-container");
-        selectionContainer.innerHTML = "";
-
-        let select = document.createElement("select");
-        select.id = "selectedOption";
-
+// Function untuk menangani pilihan dan mengunci input pilihan
+function handleSelection(jumlah) {
+    handleError(() => {
         for (let i = 1; i <= jumlah; i++) {
-            let pilihan = document.getElementById("pilihan" + i).value.trim();
-            validatePilihan(pilihan);
-
-            let option = document.createElement("option");
-            option.value = pilihan;
-            option.innerText = pilihan;
-            select.appendChild(option);
+            let inputPilihan = document.getElementById("pilihan" + i);
+            validatePilihan(inputPilihan.value);
+            inputPilihan.disabled = true; // Kunci input setelah "OK" ditekan
         }
 
-        selectionContainer.appendChild(select);
-        selectionContainer.appendChild(document.createElement("br"));
-
-        let button = document.createElement("button");
-        button.innerText = "OK";
-        button.onclick = showFinalResult;
-        selectionContainer.appendChild(button);
+        showSelection(jumlah);
     });
+}
+
+// Function untuk menampilkan dropdown pilihan
+function showSelection(jumlah) {
+    let selectionContainer = document.getElementById("selection-container");
+    selectionContainer.innerHTML = "<legend>Pilih Salah Satu</legend>";
+
+    let select = document.createElement("select");
+    select.id = "selectedOption";
+
+    for (let i = 1; i <= jumlah; i++) {
+        let pilihan = document.getElementById("pilihan" + i).value;
+
+        let option = document.createElement("option");
+        option.value = pilihan;
+        option.innerText = pilihan;
+        select.appendChild(option);
+    }
+
+    selectionContainer.appendChild(select);
+
+    let button = document.createElement("button");
+    button.innerText = "OK";
+    button.onclick = showFinalResult;    
+    selectionContainer.appendChild(document.createElement("br"));
+    selectionContainer.appendChild(button);
 }
 
 // Function untuk menampilkan hasil akhir
 function showFinalResult() {
-    exceptionHandling(() => {
+    handleError(() => {
         let nama = document.getElementById("nama").value.trim();
         let jumlah = parseInt(document.getElementById("jumlah").value, 10);
         let selected = document.getElementById("selectedOption").value;
-        let hasil = `Hallo, nama saya ${nama}, saya mempunyai sejumlah ${jumlah} pilihan yaitu `;
+        let hasil = `Halo, nama saya ${nama}, saya memiliki ${jumlah} pilihan yaitu `;
 
         let pilihanList = [];
         for (let i = 1; i <= jumlah; i++) {
-            pilihanList.push(document.getElementById("pilihan" + i).value.trim());
+            pilihanList.push(document.getElementById("pilihan" + i).value);
         }
 
         hasil += pilihanList.join(", ") + `, dan saya memilih ${selected}.`;
