@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tugas 4 - JavaScript</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <h2>Tugas 4 - JavaScript</h2>
+
+        <fieldset>
+            <legend>Form Input</legend>
+            <label for="nama">Nama:</label>
+            <input type="text" id="nama" placeholder="Masukkan Nama">
+            
+            <label for="jumlah">Jumlah Pilihan:</label>
+            <input type="number" id="jumlah" placeholder="Masukkan jumlah pilihan">
+            
+            <button id="submitButton" onclick="showPilihan()">Submit</button>
+        </fieldset>
+
+        <fieldset id="pilihan-container">
+            <legend>Masukkan Pilihan</legend>
+        </fieldset>
+
+        <fieldset id="selection-container">
+            <legend>Pilih Salah Satu</legend>
+        </fieldset>
+
+        <h3 id="result"></h3>
+    </div>
+</body>
+</html>
